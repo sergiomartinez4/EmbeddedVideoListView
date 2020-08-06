@@ -2,8 +2,9 @@ package com.brightcove.recyclervideoview;
 
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.brightcove.player.edge.Catalog;
 import com.brightcove.player.edge.PlaylistListener;
@@ -18,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String PLAYLIST_REF = "Play2017";
 
 
-    private Catalog catalog;
     private RecyclerView videoListView;
     private AdapterView adapterView;
 
@@ -29,12 +29,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        videoListView = (RecyclerView) findViewById(R.id.video_list_view);
+        videoListView = findViewById(R.id.video_list_view);
 
         adapterView = new AdapterView();
         videoListView.setAdapter(adapterView);
 
-        catalog = new Catalog(eventEmitter, ACCOUNT_ID, POLICY_KEY);
+        Catalog catalog = new Catalog.Builder(eventEmitter, ACCOUNT_ID).setPolicy(POLICY_KEY).build();
         catalog.findPlaylistByReferenceID(PLAYLIST_REF, new PlaylistListener() {
             @Override
             public void onPlaylist(Playlist playlist) {

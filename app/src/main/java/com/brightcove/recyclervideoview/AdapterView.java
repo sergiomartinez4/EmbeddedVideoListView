@@ -1,19 +1,15 @@
 package com.brightcove.recyclervideoview;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.brightcove.player.event.Event;
-import com.brightcove.player.event.EventEmitter;
-import com.brightcove.player.event.EventListener;
-import com.brightcove.player.event.EventType;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.brightcove.player.model.Video;
 import com.brightcove.player.view.BrightcoveExoPlayerVideoView;
 import com.brightcove.player.view.BrightcoveVideoView;
@@ -27,15 +23,15 @@ public class AdapterView extends RecyclerView.Adapter<AdapterView.ViewHolder> {
     private final List<Video> videoList = new ArrayList<>();
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public @NonNull ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //Get Video information
-        Video video = videoList == null ? null : videoList.get(position);
+        Video video = videoList.get(position);
         if (video != null) {
             holder.videoTitleText.setText(video.getStringProperty(Video.Fields.NAME));
             BrightcoveVideoView videoView = holder.videoView;
@@ -50,24 +46,24 @@ public class AdapterView extends RecyclerView.Adapter<AdapterView.ViewHolder> {
     }
 
     @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
 
     @Override
-    public void onViewAttachedToWindow(ViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         holder.videoView.start();
     }
 
     @Override
-    public void onViewDetachedFromWindow(ViewHolder holder) {
+    public void onViewDetachedFromWindow(@NonNull ViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
         holder.videoView.stopPlayback();
     }
 
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         int childCount = recyclerView.getChildCount();
         //We need to stop the player to avoid a potential memory leak.
@@ -79,13 +75,13 @@ public class AdapterView extends RecyclerView.Adapter<AdapterView.ViewHolder> {
         }
     }
 
-    public void setVideoList(@Nullable List<Video> videoList) {
+    public void setVideoList(@NonNull List<Video> videoList) {
         this.videoList.clear();
         this.videoList.addAll(videoList);
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
 
         public final Context context;
@@ -96,19 +92,11 @@ public class AdapterView extends RecyclerView.Adapter<AdapterView.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             context = itemView.getContext();
-            videoFrame = (FrameLayout) itemView.findViewById(R.id.video_frame);
-            videoTitleText = (TextView) itemView.findViewById(R.id.video_title_text);
+            videoFrame = itemView.findViewById(R.id.video_frame);
+            videoTitleText = itemView.findViewById(R.id.video_title_text);
             videoView = new BrightcoveExoPlayerVideoView(context);
             videoFrame.addView(videoView);
             videoView.finishInitialization();
-
-            EventEmitter eventEmitter = videoView.getEventEmitter();
-            eventEmitter.on(EventType.ENTER_FULL_SCREEN, new EventListener() {
-                @Override
-                public void processEvent(Event event) {
-                    //You can set listeners on each Video View
-                }
-            });
         }
     }
 }
